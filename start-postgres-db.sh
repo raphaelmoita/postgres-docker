@@ -13,16 +13,15 @@ docker rm ${CONTAINER} 2> /dev/null
 echo "Starting server ..."
 docker run -d \
     --name ${CONTAINER} \
-    --network ${NETWORK} \
     -p ${DB_PORT}:${DB_PORT} \
-    -e POSTGRES_USER=${DB_USER} \
     -e POSTGRES_PASSWORD=${DB_PASS} \
-    postgres
+    ${IMAGE}
 
-sleep 5
+# docker exec -it ${CONTAINER} bash -c "while ! echo exit | nc localhost ${DB_POST}; do sleep 5; done"
+sleep 10
 
-echo "Connecting to the server ..."
-docker run -it --rm \
-    --network ${NETWORK} \
-    -e PGPASSWORD=${DB_PASS} \
-    postgres psql -h ${CONTAINER} -U ${DB_USER}
+echo "Creating database ..."
+docker exec -i ${CONTAINER} psql -U postgres < ${DATABASE_SQL}
+
+echo "Creating tables ..."
+docker exec -i ${CONTAINER} psql -d ${DB_DATABASE} -U ${DB_USER} < ${TABLES_SQL}

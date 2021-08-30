@@ -1,7 +1,11 @@
+CREATE SCHEMA AUTHORIZATION moita_app;
+
+SET search_path TO moita_app;
+
 DROP TABLE IF EXISTS employee;
 DROP TABLE IF EXISTS company;
 
-CREATE TABLE company (
+CREATE TABLE moita_app.company (
     id INT,
     name VARCHAR(50),
     PRIMARY KEY (id)
